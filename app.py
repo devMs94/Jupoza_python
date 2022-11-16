@@ -43,7 +43,9 @@ def risk_parity_target(weight):
 
 def make_df(adj_price, stock):
     universe = adj_price[stock].loc['2016-01-01':'2021-12-31']
-    df = universe.resample('M').last().pct_change(1)
+    df = universe.pct_change(1)
+    df = df[1:]
+    df = df.dropna(axis='index')
     return df
 
 
@@ -79,7 +81,7 @@ def root():
         })
     global covmat
     df = make_df(adj_price, stockList)
-    covmat = np.array(df.cov() * 12)
+    covmat = np.array(df.cov() * 240)
     rp = np.array(RP(adj_price, stockList))
     ret = []
     for a in rp:
